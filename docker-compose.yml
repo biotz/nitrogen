@@ -1,0 +1,105 @@
+services:
+
+  server:
+    build:
+      context: .
+      target: dev
+    entrypoint: >
+      watchmedo
+      auto-restart
+      --recursive
+      --pattern="*.py"
+      -- python -m nitrogen
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_DEFAULT_REGION
+      - AWS_SECRET_ACCESS_KEY
+      - S3_BUCKET_NAME
+      - SERVER_PORT
+    networks:
+      - ${WEBAPP_NAME}_default
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+    profiles:
+      - dev
+    user: $UID:$GID
+    volumes:
+      - ./nitrogen:/app/nitrogen
+      - ./tests/resources:/app/tests/resources
+      - ~/.cache:/.cache
+
+  test:
+    build:
+      context: .
+      target: test
+    depends_on:
+      - server
+    entrypoint: >
+      watchmedo
+      shell-command
+      --recursive
+      --pattern="*.py"
+      --ignore-patterns="/app/tests/results/*"
+      --drop
+      --command="pytest --cov=/app/nitrogen -o cache_dir=/tmp"
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_DEFAULT_REGION
+      - AWS_SECRET_ACCESS_KEY
+      - S3_BUCKET_NAME
+      - SERVER_PORT
+    networks:
+      - ${WEBAPP_NAME}_default
+    profiles:
+      - dev
+    volumes:
+      - ./nitrogen:/app/nitrogen
+      - ./tests:/app/tests
+      - ~/.cache:/.cache
+
+  docs:
+    build:
+      context: .
+      target: docs
+    entrypoint: >
+      watchmedo
+      shell-command
+      --recursive
+      --pattern="*.py;*.md;*.rst"
+      --ignore-patterns="/app/tests/*"
+      --drop
+      --command="make -C docs clean & make -C docs html"
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_DEFAULT_REGION
+      - AWS_SECRET_ACCESS_KEY
+      - S3_BUCKET_NAME
+      - SERVER_PORT
+    networks:
+      - ${WEBAPP_NAME}_default
+    profiles:
+      - dev
+    volumes:
+      - ./nitrogen:/app/nitrogen
+      - ./docs:/app/docs
+
+  nitrogen:
+    build:
+      context: .
+      target: prod
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_DEFAULT_REGION
+      - AWS_SECRET_ACCESS_KEY
+      - S3_BUCKET_NAME
+      - ${WEBA}_CONTROL_PORT
+    networks:
+      - ${WEBAPP_NAME}_default
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+    profiles:
+      - prod
+
+networks:
+  webapp_default:
+    external: true
