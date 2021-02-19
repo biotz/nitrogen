@@ -8,7 +8,7 @@ Nitrogen
    index
 
 
-Nitrogen is a platform for developing, testing, documenting and deploying a Python based (micro-)service with a REST API. Meant to bond to hydrogen to provide additional functionality through a microservice architecture.
+Nitrogen is a platform for developing, testing, documenting and deploying a Python based (micro-)service with a REST API. Meant to bond to the Hydrogen to provide additional functionality through a microservice architecture.
 
 Problem space
 -------------
@@ -27,6 +27,8 @@ The goal of this project is to tackle this challenge by creating a platform that
 - Requiring the developer to create a blueprint of the service
 - Automatically creating a REST web service
 - Creating an OpenAPI documentation for it.
+
+:doc:`dependencies`
 
 
 Indices and tables
