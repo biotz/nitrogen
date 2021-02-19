@@ -1,5 +1,4 @@
-from nitrogen.assimilation.classification import predict
-from nitrogen.boundary.image import Image
+from assimilation.classification import predict
 import nitrogen.boundary.storage as storage
 import nitrogen.boundary.web_server as web
 
@@ -81,13 +80,12 @@ async def classify_local_json(request):
         return web.response.json({"error": "No 'file' key in JSON"}, 400)
     try:
         image_path = storage.local_image_path(imagename)
-        image = Image.open(image_path)
     except Exception as e:
-        return web.response.json({"error": "Cannot open file as image"}, 400)
+        return web.response.json({"error": f"Cannot open file as image. {e}"}, 400)
     try:
         prediction = predict(image_path)
     except Exception as e:
-        return web.response.json({"error": f"Coudn't process the file"}, 500)
+        return web.response.json({"error": f"Coudn't process the file. {e}"}, 500)
     return web.response.json(prediction)
 
 
@@ -102,13 +100,13 @@ async def classify_local_json(request):
 @web.doc.response(500, {"error": str}, description="Internal error during prediction.")
 async def classify_local(request, imagename):
     try:
-        image = Image.open(storage.local_image_path(imagename))
+        image_path = storage.local_image_path(imagename)
     except Exception as e:
-        return web.response.json({"error": "Cannot open file as image"}, 400)
+        return web.response.json({"error": f"Cannot open file as image. {e}"}, 400)
     try:
-        prediction = predict(image)
+        prediction = predict(image_path)
     except Exception as e:
-        return web.response.json({"error": f"Coudn't process the file"}, 500)
+        return web.response.json({"error": f"Coudn't process the file. {e}"}, 500)
     return web.response.json(prediction)
 
 
@@ -132,13 +130,13 @@ async def classify_s3_json(request):
     except:
         return web.response.json({"error": "No 'imagename' key in JSON"}, 400)
     try:
-        image = Image.open(storage.cloud_image(obj_key))
+        image_path = storage.cloud_image(obj_key)
     except Exception as e:
-        return web.response.json({"error": "Cannot open file as image"}, 400)
+        return web.response.json({"error": f"Cannot open file as image. {e}"}, 400)
     try:
-        prediction = predict(image)
+        prediction = predict(image_path)
     except Exception as e:
-        return web.response.json({"error": f"Coudn't process the file"}, 500)
+        return web.response.json({"error": f"Coudn't process the file. {e}"}, 500)
     return web.response.json(prediction)
 
 
@@ -153,7 +151,7 @@ async def classify_s3_json(request):
 @web.doc.response(500, {"error": str}, description="Internal error during prediction.")
 async def classify_s3(request, imagename):
     try:
-        image = Image.open(storage.cloud_image(imagename))
+        image = storage.cloud_image(imagename)
     except Exception as e:
         return web.response.json({"error": f"Cannot open file as image. {e}"}, 400)
     try:

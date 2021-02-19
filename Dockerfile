@@ -9,10 +9,12 @@ RUN pip install --no-cache-dir sanic==20.12.2
 RUN pip install --no-cache-dir sanic_openapi==0.6.2
 RUN pip install --no-cache-dir boto3==1.17.7
 
-# TODO install depenedencices for the service here
-
 # TODO when you know what you are doing - remove assimilation
 RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+# TODO install depenedencices for the service here
+COPY apps/requirements.txt /opt/requirements.txt
+RUN python -m pip install -r /opt/requirements.txt
 
 # development ====================================================
 

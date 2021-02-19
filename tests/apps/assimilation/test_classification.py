@@ -1,5 +1,5 @@
 from PIL import Image
-from nitrogen.assimilation.classification import categories, predict, preprocess
+from assimilation.classification import categories, predict, preprocess
 
 
 def test_categories():
@@ -20,7 +20,7 @@ def test_magnet_in_categories():
 
 
 def prediction(ifile):
-    return predict(Image.open(f"/app/tests/resources/{ifile}.jpg"))
+    return predict(f"/app/tests/resources/{ifile}.jpg")
 
 
 def test_cat():

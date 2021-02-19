@@ -24,6 +24,7 @@ services:
       - dev
     user: $UID:$GID
     volumes:
+      - ./apps:/app/apps
       - ./nitrogen:/app/nitrogen
       - ./tests/resources:/app/tests/resources
       - ~/.cache:/.cache
@@ -53,6 +54,7 @@ services:
     profiles:
       - dev
     volumes:
+      - ./apps:/app/apps
       - ./nitrogen:/app/nitrogen
       - ./tests:/app/tests
       - ~/.cache:/.cache
@@ -80,6 +82,7 @@ services:
     profiles:
       - dev
     volumes:
+      - ./apps:/app/apps
       - ./nitrogen:/app/nitrogen
       - ./docs:/app/docs
 

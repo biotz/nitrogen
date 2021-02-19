@@ -1,4 +1,5 @@
-from pathlib import Path
+from pathlib import Path, PosixPath
+from PIL import Image
 import torch
 from torchvision import transforms
 
@@ -22,6 +23,8 @@ with open(Path(__file__).parent / "imagenet_classes.txt") as f:
 
 
 def predict(input_image):
+    if type(input_image) in [str, Path, PosixPath]:
+        input_image = Image.open(input_image)
     input_tensor = preprocess(input_image)
     # create a mini-batch as expected by the model
     input_batch = input_tensor.unsqueeze(0)
